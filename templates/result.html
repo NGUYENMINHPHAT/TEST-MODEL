@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico" />
+    <style>
+      /* Styling for the table and header */
+      .table-wrapper {
+        max-height: 500px; /* Adjust height for scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
+      }
+
+      /* Sticky header for table */
+      .table thead th {
+        position: sticky;
+        top: -0.1px;
+        height: 40px;
+        border-radius: 8px;
+        z-index: 10; /* Increase this value */
+        background-color: #343a40; /* Dark background */
+        color: white;
+        text-align: center;
+      }
+
+      /* Align table content in the middle */
+      .table tbody td {
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      /* Styling for the alert box */
+      .info-box {
+        font-size: 1.1rem;
+        padding: 20px;
+        /* margin-top: 20px; */
+        margin-left: 10px;
+        width: 350px;
+        background-color: #e8f7ff;
+        border-left: 5px solid #17a2b8;
+        /* margin-bottom: 20px; */
+        text-align: left;
+      }
+
+      /* Responsive layout for better spacing */
+      .content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      /* Heading and table title */
+      h4 {
+        text-align: center;
+      }
+    </style>
+    <title>Result Testing</title>
+  </head>
+  <body class="container py-4">
+    <!-- Title -->
+    <h4 class="text-center mb-4">Result Testing</h4>
+
+    <div class="content-wrapper">
+      <!-- Info Box for Correct and Wrong Counts -->
+      <div class="info-box alert alert-info col-12 col-md-5" id="info-box">
+        <p>
+          <strong>Number of correct answers:</strong>
+          <span id="correct">{{ correct }}</span>
+        </p>
+        <p>
+          <strong>Number of incorrect answers:</strong>
+          <span id="wrong-count">{{ wrong_count }}</span>
+        </p>
+      </div>
+
+      <!-- Wrong Answers Section -->
+      <div class="table-box col-12">
+        {% if wrong_answers %}
+        <h4 class="mt-5">Wrong Question</h4>
+        <div class="d-flex justify-content-end mb-3">
+          <button class="btn btn-primary" id="download-btn">
+            Download as Excel
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table
+            class="table table-bordered table-striped table-hover"
+            id="results-table"
+          >
+            <thead class="table-dark">
+              <tr>
+                <th>STT</th>
+                <th>Prompt</th>
+                <th>Expected</th>
+                <th>Returned</th>
+                <th>Similarity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for answer in wrong_answers %}
+              <tr>
+                <td>{{ answer.STT }}</td>
+                <td>{{ answer.Prompt }}</td>
+                <td>{{ answer.Expected }}</td>
+                <td>{{ answer.Returned }}</td>
+                <td>{{ answer.Similarity }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Include the xlsx library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+      document
+        .getElementById("download-btn")
+        .addEventListener("click", function () {
+          // Create a new workbook and sheet
+          var wb = XLSX.utils.book_new();
+          var wsData = [
+            [
+              "Number of correct answers",
+              document.getElementById("correct").textContent,
+            ],
+            [
+              "Number of incorrect answers",
+              document.getElementById("wrong-count").textContent,
+            ],
+            [], // Empty row to separate sections
+          ];
+
+          // Add the results table to the Excel sheet
+          var table = document.getElementById("results-table");
+          var tableData = XLSX.utils.table_to_sheet(table);
+
+          // Create worksheet from wsData and add it to workbook
+          var ws = XLSX.utils.aoa_to_sheet(wsData);
+          XLSX.utils.sheet_add_json(ws, XLSX.utils.sheet_to_json(tableData), {
+            origin: -1,
+          });
+
+          // Append worksheet to the workbook
+          XLSX.utils.book_append_sheet(wb, ws, "Result_Testing");
+
+          // Write the workbook to an Excel file
+          XLSX.writeFile(wb, "Result_Testing.xlsx");
+        });
+    </script>
+  </body>
+</html>

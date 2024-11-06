@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tools Chatbot Automation Test</title>
+    <!-- Thêm Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico" />
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <h3 class="text-center">Tools Chatbot Automation Test</h3>
+      <div
+        class="card mt-4 shadow-sm"
+        style="
+          max-width: 50%;
+          left: 50%;
+          position: relative;
+          transform: translateX(-50%);
+        "
+      >
+        <div class="card-body">
+          <form
+            id="fileForm"
+            action="/"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="mb-3">
+              <label for="model" class="form-label">Model:</label>
+              <input
+                type="text"
+                id="model"
+                name="model"
+                class="form-control"
+                placeholder="Input model"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="file" class="form-label">Upload file Excel:</label>
+              <input
+                type="file"
+                id="file"
+                name="file"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-block">
+                Testing
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thêm Bootstrap JS và Popper.js (tùy chọn) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript để lưu file vào localStorage -->
+    <script>
+      document
+        .getElementById("fileForm")
+        .addEventListener("submit", function (event) {
+          // Ngăn không cho form gửi ngay lập tức
+          event.preventDefault();
+
+          // Lấy file mà người dùng đã chọn
+          const fileInput = document.getElementById("file");
+          const file = fileInput.files[0];
+
+          if (file) {
+            const reader = new FileReader();
+
+            // Khi file được đọc xong
+            reader.onload = function (e) {
+              const fileContent = e.target.result;
+
+              // Lưu nội dung file vào localStorage dưới dạng base64
+              localStorage.setItem("uploadedFile", fileContent);
+              alert("File đã được lưu vào localStorage!");
+
+              // Sau khi lưu file vào localStorage, submit form
+              document.getElementById("fileForm").submit();
+            };
+
+            // Đọc file dưới dạng Data URL (base64)
+            reader.readAsDataURL(file);
+          } else {
+            alert("Vui lòng chọn một file để tải lên.");
+          }
+        });
+    </script>
+  </body>
+</html>
