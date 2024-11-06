@@ -1,3 +1,6 @@
 flask
 openai
 python-dotenv
+os-sys
+pandas
+cdifflib
