@@ -25,7 +25,7 @@ def query_openai_model(prompt, model):
 
 def similarity_score(expected, returned):
     """
-    Tính toán độ tương đồng giữa hai chuỗi sử dụng SequenceMatcher của difflib
+    Calculate the similarity between two strings using SequenceMatcher of difflib
     """
     return difflib.SequenceMatcher(None, expected, returned).ratio()
 
@@ -53,12 +53,12 @@ def index():
                     if not isinstance(expected_completion, str):
                         expected_completion = str(expected_completion)
 
-                    # Xử lý định dạng chuỗi
+                    # Process string format
                     expected_completion = " ".join(expected_completion.split())
                     returned_answer = query_openai_model(prompt, model)
                     returned_answer = " ".join(returned_answer.split())
 
-                    # So sánh dựa trên tỷ lệ tương đồng
+                    # Compare based on similarity score
                     similarity = similarity_score(expected_completion, returned_answer)
 
                     if similarity >= threshold:
@@ -70,7 +70,7 @@ def index():
                                 "Prompt": prompt,
                                 "Expected": expected_completion,
                                 "Returned": returned_answer,
-                                "Similarity": f"{similarity * 100:.2f}%",  # Hiển thị tỉ lệ % giống nhau
+                                "Similarity": f"{similarity * 100:.2f}%",  # Display similarity percentage
                             }
                         )
 
@@ -90,4 +90,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
